@@ -4,6 +4,7 @@ import ascending from "./ascending.js";
 import area from "./area.js";
 import constant from "./constant.js";
 import contains from "./contains.js";
+import deepflat from "./deepflat.js";
 import noop from "./noop.js";
 
 var cases = [
@@ -129,9 +130,10 @@ export default function() {
           delete fragmentByStart[g.start];
           if (f === g) {
             f.ring.push(end);
-            callback(f.ring);
+            callback(deepflat(f.ring));
           } else {
-            fragmentByStart[f.start] = fragmentByEnd[g.end] = {start: f.start, end: g.end, ring: f.ring.concat(g.ring)};
+            f.ring.push.apply(f, g.ring);
+            fragmentByStart[f.start] = fragmentByEnd[g.end] = {start: f.start, end: g.end, ring: f.ring};
           }
         } else {
           delete fragmentByEnd[f.end];
@@ -144,9 +146,10 @@ export default function() {
           delete fragmentByEnd[g.end];
           if (f === g) {
             f.ring.push(end);
-            callback(f.ring);
+            callback(deepflat(f.ring));
           } else {
-            fragmentByStart[g.start] = fragmentByEnd[f.end] = {start: g.start, end: f.end, ring: g.ring.concat(f.ring)};
+            g.ring.push.apply(g, f.ring);
+            fragmentByStart[g.start] = fragmentByEnd[f.end] = {start: g.start, end: f.end, ring: g.ring};
           }
         } else {
           delete fragmentByStart[f.start];
